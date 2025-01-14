@@ -36,7 +36,7 @@ public:
     void after_use(Skill* skill, ChampionInterface* enemyChampion) override{
         enemyChampion->getDotHandler()->add_effect(this);
     }
-    void effect(ChampionInterface* enemyChampion){
+    void effect(ChampionInterface* enemyChampion) override{
         sufferingTicks--;
         if(sufferingTicks==0&&sufferingStacks<3){
             champion->setDamageMultiplier(champion->damageMultiplier()/(1+0.02*sufferingStacks)*(1.02+0.02*sufferingStacks));
