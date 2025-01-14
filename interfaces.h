@@ -2,17 +2,12 @@
 #define WP_PROJ_INTERFACES_H
 
 class Item;
-template<typename T>
-concept ItemConcept=std::derived_from<T,Item>;
 class Champion;
-template<typename T>
-concept ChampionConcept=std::derived_from<T,Champion>;
-
 class Skill;
 class ItemSkill;
-class ItemSkillsObservers;
+class ItemSkillsSubject;
 class DotHandler;
-class ItemSkillsObserversInterface;
+class ItemSkillsSubjectInterface;
 
 class ChampionLevelInterface{
 public:
@@ -35,6 +30,17 @@ public:
     virtual double criticalDamage() const=0;
     virtual double lethality() const=0;
     virtual double percentageArmorPenetration() const=0;
+    virtual double physicalDamageMultiplier() const=0;
+    virtual double trueDamageMultiplier() const=0;
+    virtual double damageMultiplier() const=0;
+    virtual void setAD(double val)=0;
+    virtual void setCriticalChance(double val)=0;
+    virtual void setCriticalDamage(double val)=0;
+    virtual void setLethality(double val)=0;
+    virtual void setPercentageArmorPenetration(double val)=0;
+    virtual void setPhysicalDamageMultiplier(double val)=0;
+    virtual void setTrueDamageMultiplier(double val)=0;
+    virtual void setDamageMultiplier(double val)=0;
 };
 
 
@@ -45,6 +51,12 @@ public:
     virtual double flatMagicPenetration() const=0;
     virtual double percentageMagicPenetration() const=0;
     virtual double ap() const=0;
+    virtual double magicDamageMultiplier() const=0;
+    virtual void setFlatAP(double val)=0;
+    virtual void setAPMultiplier(double val)=0;
+    virtual void setFlatMagicPenetration(double val)=0;
+    virtual void setPercentageMagicPenetration(double val)=0;
+    virtual void setMagicDamageMultiplier(double val)=0;
 };
 
 class ChampionDefensiveStatsInterface{
@@ -62,18 +74,22 @@ public:
     virtual double armor() const=0;
     virtual double magicResist() const=0;
     virtual double currHP() const=0;
+    virtual void setMaxHP(double val)=0;
+    virtual void setArmor(double val)=0;
+    virtual void setMagicResist(double val)=0;
+    virtual void setCurrHP(double val)=0;
 };
 
 class ChampionInterface: public ChampionLevelInterface, public ChampionPhysicalStatsInterface,
                          public ChampionMagicStatsInterface,public ChampionDefensiveStatsInterface{
 public:
-    virtual ItemSkillsObserversInterface* getItemSkillsObservers() const=0;
+    virtual ItemSkillsSubjectInterface* getItemSkillsSubject() const=0;
     virtual DotHandler* getDotHandler() const=0;
     virtual void addBaseStats(Champion* derived)=0;
     virtual void receiveDamage(Skill* skill, ChampionInterface* offensive_champion)=0;
 };
 
-class ItemSkillsObserversInterface{
+class ItemSkillsSubjectInterface{
 public:
     virtual void before_use(Skill* skill, ChampionInterface* championInterface)=0;
     virtual void after_use(Skill* skill, ChampionInterface* championInterface)=0;

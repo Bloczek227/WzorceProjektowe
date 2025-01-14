@@ -36,6 +36,7 @@ public:
         Passive(VelKoz* velkoz_){
             velkoz=velkoz_;
         }
+        bool spell() override{return false;}
         double true_damage(ChampionInterface* enemyChampion) override{
             return 35+145.0/17*(velkoz->lv()-1)+0.6*velkoz->ap();
         }

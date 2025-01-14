@@ -42,6 +42,7 @@ public:
         to_delete=std::unordered_set<std::string>();
         for(auto& [k,v]:dot_item_skills){
             champion->receiveDamage(v,v->champion);
+            v->effect(champion);
             v->ticksLeft--;
             if(v->ticksLeft<=0)
                 to_delete.insert(k);

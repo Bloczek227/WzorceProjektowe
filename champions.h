@@ -3,5 +3,6 @@
 
 #include "champions/Ahri.h"
 #include "champions/VelKoz.h"
+#include "champions/Xerath.h"
 
 #endif //WP_PROJ_CHAMPIONS_H

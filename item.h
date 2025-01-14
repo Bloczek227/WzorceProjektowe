@@ -21,20 +21,19 @@ public:
     virtual double maxHP(){return 0;}
     virtual double armor(){return 0;}
     virtual double magicResist(){return 0;}
-    template<ChampionConcept Champion>
-    void setStats(Champion* champ){
-        champ->ad_+=ad();
-        champ->criticalChance_+=criticalChance();
-        champ->criticalDamage_+=criticalDamage();
-        champ->lethality_+=lethality();
-        champ->percentageArmorPenetration_=1-(1-champ->percentageArmorPenetration())*(1-percentageArmorPenetration());
-        champ->flatAP_+= flatAP();
-        champ->apMultiplier_+=apMultiplier();
-        champ->flatMagicPenetration_+=flatMagicPenetration();
-        champ->percentageMagicPenetration_=100-(100-champ->percentageMagicPenetration())*(100-percentageMagicPenetration())/100;
-        champ->maxHP_+=maxHP();
-        champ->armor_+=armor();
-        champ->magicResist_+=magicResist();
+    void setStats(ChampionInterface* champ){
+        champ->setAD(champ->ad()+ad());
+        champ->setCriticalChance(champ->criticalChance()+criticalChance());
+        champ->setCriticalDamage(champ->criticalDamage()+criticalDamage());
+        champ->setLethality(champ->lethality()+lethality());
+        champ->setPercentageArmorPenetration(100-(100-champ->percentageArmorPenetration())*(100-percentageArmorPenetration()));
+        champ->setFlatAP(champ->flatAP()+flatAP());
+        champ->setAPMultiplier(champ->apMultiplier()+apMultiplier());
+        champ->setFlatMagicPenetration(champ->flatMagicPenetration()+flatMagicPenetration());
+        champ->setPercentageMagicPenetration(100-(100-champ->percentageMagicPenetration())*(100-percentageMagicPenetration())/100);
+        champ->setMaxHP(champ->maxHP()+maxHP());
+        champ->setArmor(champ->armor()+armor());
+        champ->setMagicResist(champ->magicResist()+magicResist());
     }
     virtual void setChampion(ChampionInterface* champion_){
         champion=champion_;
@@ -42,7 +41,7 @@ public:
     virtual void add_observers(){}
 };
 
-class ItemSkillsObservers:public ItemSkillsObserversInterface{
+class ItemSkillsSubject: public ItemSkillsSubjectInterface{
 public:
     std::unordered_set<ItemSkill*> skills;
     void add(ItemSkill* skill){

@@ -24,6 +24,9 @@ public:
     double criticalDamage_=0;
     double lethality_=0;
     double percentageArmorPenetration_=0;
+    double physicalDamageMultiplier_=1;
+    double trueDamageMultiplier_=1;
+    double damageMultiplier_=1;
 };
 
 class ChampionMagicStats{
@@ -32,6 +35,7 @@ public:
     double apMultiplier_=1;
     double flatMagicPenetration_=0;
     double percentageMagicPenetration_=0;
+    double magicDamageMultiplier_=1;
 };
 
 class ChampionDefensiveStats{
@@ -68,10 +72,33 @@ public:
     double armor() const override{return armor_;}
     double magicResist() const override{return magicResist_;}
     double currHP() const override{return currHP_;}
+    double physicalDamageMultiplier() const override{return physicalDamageMultiplier_;};
+    double magicDamageMultiplier() const override{return magicDamageMultiplier_;};
+    double trueDamageMultiplier() const override{return trueDamageMultiplier_;};
+    double damageMultiplier() const override{return damageMultiplier_;};
     double ap() const override{return flatAP()*apMultiplier();}
+
+    void setAD(double val) override{ad_=val;}
+    void setCriticalChance(double val) override{criticalChance_=val;}
+    void setCriticalDamage(double val) override{criticalDamage_=val;}
+    void setLethality(double val) override{lethality_=val;}
+    void setPercentageArmorPenetration(double val) override{percentageArmorPenetration_=val;}
+    void setFlatAP(double val) override{flatAP_=val;}
+    void setAPMultiplier(double val) override{apMultiplier_=val;}
+    void setFlatMagicPenetration(double val) override{flatMagicPenetration_=val;}
+    void setPercentageMagicPenetration(double val) override{percentageMagicPenetration_=val;}
+    void setMaxHP(double val) override{maxHP_=val;}
+    void setArmor(double val) override{armor_=val;}
+    void setMagicResist(double val) override{magicResist_=val;}
+    void setPhysicalDamageMultiplier(double val) override{physicalDamageMultiplier_=val;}
+    void setMagicDamageMultiplier(double val) override{magicDamageMultiplier_=val;}
+    void setTrueDamageMultiplier(double val) override{trueDamageMultiplier_=val;}
+    void setDamageMultiplier(double val) override{damageMultiplier_=val;}
+    void setCurrHP(double val) override{currHP_=val;}
+
     std::vector<Item*> items;
-    ItemSkillsObservers* itemSkillsObservers;
-    ItemSkillsObservers* getItemSkillsObservers() const override{return itemSkillsObservers;}
+    ItemSkillsSubject* itemSkillsSubject;
+    ItemSkillsSubject* getItemSkillsSubject() const override{return itemSkillsSubject;}
     DotHandler* dotHandler;
     DotHandler* getDotHandler() const override{return dotHandler;}
     Champion();
@@ -82,7 +109,7 @@ public:
         E_level_=skill_levels[2];
         R_level_=skill_levels[3];
         items=items_;
-        itemSkillsObservers=new ItemSkillsObservers();
+        itemSkillsSubject=new ItemSkillsSubject();
         for(auto item:items_) {
             item->setChampion(this);
             item->setStats(this);
@@ -100,15 +127,17 @@ public:
     };
     void receiveDamage(Skill* skill, ChampionInterface* offensive_champion) override{
         double effective_armor=armor()*(100-offensive_champion->percentageArmorPenetration())/100-offensive_champion->lethality();
-        double physical_damage=effective_armor>=0?
+        double physical_damage=(effective_armor>=0?
                                skill->physical_damage(this)*(100/(100+effective_armor)):
-                               skill->physical_damage(this)*(2-(100/(100-effective_armor)));
+                               skill->physical_damage(this)*(2-(100/(100-effective_armor))))*
+                                       offensive_champion->physicalDamageMultiplier();
         double effective_magic_resist=magicResist()*(100-offensive_champion->percentageMagicPenetration())/100-
                                       offensive_champion->flatMagicPenetration();
-        double magic_damage=effective_magic_resist>=0?
+        double magic_damage=(effective_magic_resist>=0?
                             skill->magic_damage(this)*(100/(100+effective_magic_resist)):
-                            skill->magic_damage(this);
-        currHP_-=physical_damage+magic_damage+skill->true_damage(this);
+                            skill->magic_damage(this))*
+                            offensive_champion->magicDamageMultiplier();
+        currHP_-=(physical_damage+magic_damage+skill->true_damage(this)*offensive_champion->trueDamageMultiplier())*offensive_champion->damageMultiplier();
     }
 };
 

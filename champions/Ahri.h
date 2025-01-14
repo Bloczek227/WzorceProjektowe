@@ -23,6 +23,7 @@ public:
         BasicAttack(Ahri* ahri_){
             ahri=ahri_;
         }
+        bool spell() override{return false;}
         double physical_damage(ChampionInterface* enemyChampion) override{
             return ahri->ad()*(1+ahri->criticalDamage()*ahri->criticalChance()/10000);
         }

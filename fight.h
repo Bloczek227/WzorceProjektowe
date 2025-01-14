@@ -19,6 +19,7 @@ public:
         for(int i=0;i<ticks;i++)
             tick();
     }
+    double total_damage(){ return defensive_champion->maxHP()-defensive_champion->currHP();}
 };
 
 #endif //WP_PROJ_FIGHT_H

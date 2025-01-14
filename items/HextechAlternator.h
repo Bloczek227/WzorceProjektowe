@@ -13,7 +13,7 @@ public:
     }
     double magic_damage(ChampionInterface* enemyChampion) override{return 65;}
     void after_use(Skill* skill, ChampionInterface* enemyChampion) override{
-        if(!used){
+        if(!used&&skill->spell()){
             used=true;
             enemyChampion->receiveDamage(this,champion);
         }
@@ -28,7 +28,6 @@ public:
     }
     HextechAlternatorSkill* revved;
     HextechAlternator(){
-
         revved=new HextechAlternatorSkill();
         revved->champion=champion;
     }
